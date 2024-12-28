@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import kadoSound from "./assetu/audio/kado.mp3";
+import kotuSound from "./assetu/audio/kotu.mp3"; 
 import "./../styles.css";
 
 const App = () => {
@@ -128,7 +130,6 @@ const App = () => {
     setWinner(winner);
     setLastGame({ black, white, winner });
 
-    // 戦績をローカルストレージに保存
     const savedScores = JSON.parse(localStorage.getItem('scores')) || { black: 0, white: 0 };
     if (winner === "black") savedScores.black++;
     if (winner === "white") savedScores.white++;
@@ -144,6 +145,14 @@ const App = () => {
     const newBoard = flipDiscs(row, col, board, turn);
     setBoard(newBoard);
     handleTurnChange(newBoard, turn);
+  
+  const isCorner = (row === 0 || row === rows - 1) && (col === 0 || col === cols - 1);
+    playSound(isCorner);
+  };
+
+  const playSound = (isCorner) => {
+    const audio = new Audio(isCorner ? kadoSound : kotuSound);
+    audio.play();
   };
 
   const handleAIMove = () => {
@@ -192,7 +201,7 @@ const App = () => {
         <>
           <h1>オセロゲーム</h1>
           {gameOver ? (
-            <div>
+            <div className="game-over">
               <h2>ゲーム終了</h2>
               <p>勝者: {winner === "black" ? "黒" : winner === "white" ? "白" : "引き分け"}</p>
               <p>黒: {lastGame.black} 駒</p>
@@ -223,5 +232,4 @@ const App = () => {
     </div>
   );
 };
-
 export default App;
