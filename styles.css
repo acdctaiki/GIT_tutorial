@@ -4,30 +4,42 @@
   grid-template-rows: repeat(8, 50px);
   gap: 2px;
   margin: 20px auto;
+  background-color: #2a2a2a;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .cell {
   width: 50px;
   height: 50px;
-  background-color: green;
+  background-color: #228b22; /* 濃い緑色 */
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  border: 1px solid #006400; /* 枠線をダークグリーンに */
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
 }
 
-.cell.black {
-  background-color: #000;
+.cell:hover {
+  background-color: #32cd32; /* 明るい緑色 */
 }
 
+.cell.black,
 .cell.white {
-  background-color: #fff;
+  cursor: default; /* すでに駒があるセルはクリック不可に */
 }
 
 .disc {
   width: 40px;
   height: 40px;
   border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* 影を追加して立体感を演出 */
+  transition: transform 0.3s ease;
 }
 
 .disc.black {
@@ -37,6 +49,7 @@
 .disc.white {
   background-color: white;
 }
+
 .disc.flip {
   animation: flip-animation 0.5s ease-in-out;
 }
@@ -51,4 +64,74 @@
   100% {
     transform: scaleY(1);
   }
+}
+
+/* スタート画面 */
+.start-screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* 全画面の高さを確保 */
+  text-align: center;
+  background-color: #3e8e41; /* 緑色の背景 */
+  position: relative;
+  z-index: 1; /* ボタンや文字が背景より前に表示されるように */
+}
+
+/* オセロ盤の背景 */
+.start-screen::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 480px;
+  height: 480px;
+  background: linear-gradient(to bottom, #228b22 50%, #006400 50%);
+  background-size: 100% 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  z-index: 0; /* 背景が前面の要素より後ろに表示される */
+}
+
+/* 格子線 */
+.start-screen::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 480px;
+  height: 480px;
+  background: transparent;
+  border: 1px solid #2c6b2f; /* 格子線の色 */
+  transform: translate(-50%, -50%);
+  z-index: 0; /* 格子線が背景の一部として後ろに表示される */
+}
+
+/* スタート画面のタイトル */
+.start-screen h1 {
+  font-size: 5rem;
+  margin-bottom: 20px;
+  z-index: 1; /* 文字が背景より前に表示される */
+}
+
+.last-game {
+  margin-bottom: 20px;
+  z-index: 1; /* 文字が背景より前に表示される */
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 1; /* ボタンが背景より前に表示される */
+}
+
+button:hover {
+  background-color: #0056b3;
 }

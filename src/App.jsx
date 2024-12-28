@@ -14,9 +14,11 @@ const App = () => {
   const [gameOver, setGameOver] = useState(false);
   const [winner, setWinner] = useState(null);
   const [message, setMessage] = useState("");
+  const [lastGame, setLastGame] = useState(null);
+  const [gameStarted, setGameStarted] = useState(false);
 
   const directions = [
-    [-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [-1, 1], [1, -1], [1, 1]
+    [-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [-1, 1], [1, -1], [1, 1],
   ];
 
   const initializeBoard = () => {
@@ -32,17 +34,13 @@ const App = () => {
     setGameOver(false);
     setWinner(null);
     setMessage("");
+    setGameStarted(true);
   };
-
-  useEffect(() => {
-    initializeBoard();
-  }, []);
 
   const isInBounds = (x, y) => x >= 0 && x < rows && y >= 0 && y < cols;
 
   const isValidMove = (row, col, board, player) => {
     if (board[row][col]) return false;
-
     const opponent = player === "black" ? "white" : "black";
 
     for (let [dx, dy] of directions) {
@@ -65,12 +63,12 @@ const App = () => {
   };
 
   const flipDiscs = (row, col, board, player) => {
-    const newBoard = board.map(row => [...row]);
+    const newBoard = board.map((row) => [...row]);
     const opponent = player === "black" ? "white" : "black";
 
     newBoard[row][col] = player;
 
-    for (let [dx, dy] of directions) {
+    directions.forEach(([dx, dy]) => {
       let x = row + dx;
       let y = col + dy;
       const discsToFlip = [];
@@ -86,12 +84,12 @@ const App = () => {
           newBoard[flipX][flipY] = player;
         });
       }
-    }
+    });
 
     return newBoard;
   };
 
-  const countDiscs = board => {
+  const countDiscs = (board) => {
     return board.flat().reduce(
       (counts, cell) => {
         if (cell === "black") counts.black++;
@@ -104,7 +102,6 @@ const App = () => {
 
   const handleTurnChange = (currentBoard, currentTurn) => {
     const nextTurn = currentTurn === "black" ? "white" : "black";
-
     const hasValidMove = currentBoard.some((row, rowIndex) =>
       row.some((cell, colIndex) => isValidMove(rowIndex, colIndex, currentBoard, nextTurn))
     );
@@ -123,9 +120,14 @@ const App = () => {
       )
     ) {
       setGameOver(true);
-      const { black, white } = countDiscs(currentBoard);
-      setWinner(black > white ? "black" : "white");
+      handleGameOver(currentBoard);
     }
+  };
+
+  const handleGameOver = (board) => {
+    const { black, white } = countDiscs(board);
+    setWinner(black > white ? "black" : "white");
+    setLastGame({ black, white, winner: black > white ? "black" : "white" });
   };
 
   const handleCellClick = (row, col) => {
@@ -136,13 +138,7 @@ const App = () => {
 
     const newBoard = flipDiscs(row, col, board, turn);
     setBoard(newBoard);
-
-    if (gameOver) {
-      const { black, white } = countDiscs(newBoard);
-      setWinner(black > white ? "black" : "white");
-    } else {
-      handleTurnChange(newBoard, turn);
-    }
+    handleTurnChange(newBoard, turn);
   };
 
   const handleAIMove = () => {
@@ -170,30 +166,47 @@ const App = () => {
 
   return (
     <div className="App">
-      <h1>オセロゲーム</h1>
-      {gameOver ? (
-        <div>
-          <h2>ゲーム終了</h2>
-          <p>勝者: {winner === "black" ? "黒" : "白"}</p>
-          <button onClick={initializeBoard}>もう一度プレイ</button>
+      {!gameStarted ? (
+        <div className="start-screen">
+          <h1>オセロゲーム</h1>
+          {lastGame && (
+            <div className="last-game">
+              <h2>前回の記録</h2>
+              <p>黒: {lastGame.black} 駒</p>
+              <p>白: {lastGame.white} 駒</p>
+              <p>勝者: {lastGame.winner === "black" ? "黒" : "白"}</p>
+            </div>
+          )}
+          <button onClick={initializeBoard}>ゲームを開始</button>
         </div>
       ) : (
         <>
-          <p>現在のターン: {turn === "black" ? "黒" : "白"}</p>
-          <p>{message}</p>
-          <div className="board">
-            {board.map((row, rowIndex) =>
-              row.map((cell, colIndex) => (
-                <div
-                  key={`${rowIndex}-${colIndex}`}
-                  className={`cell ${cell}`}
-                  onClick={() => handleCellClick(rowIndex, colIndex)}
-                >
-                  {cell && <div className={`disc ${cell}`}></div>}
-                </div>
-              ))
-            )}
-          </div>
+          <h1>オセロゲーム</h1>
+          {gameOver ? (
+            <div>
+              <h2>ゲーム終了</h2>
+              <p>勝者: {winner === "black" ? "黒" : "白"}</p>
+              <button onClick={initializeBoard}>もう一度プレイ</button>
+            </div>
+          ) : (
+            <>
+              <p>現在のターン: {turn === "black" ? "黒" : "白"}</p>
+              <p>{message}</p>
+              <div className="board">
+                {board.map((row, rowIndex) =>
+                  row.map((cell, colIndex) => (
+                    <div
+                      key={`${rowIndex}-${colIndex}`}
+                      className={`cell ${cell}`}
+                      onClick={() => handleCellClick(rowIndex, colIndex)}
+                    >
+                      {cell && <div className={`disc ${cell}`}></div>}
+                    </div>
+                  ))
+                )}
+              </div>
+            </>
+          )}
         </>
       )}
     </div>
