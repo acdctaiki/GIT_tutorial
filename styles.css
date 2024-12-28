@@ -1,129 +1,39 @@
-/* General styles */
-body {
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-header {
-    background: url('images/header-image.jpg') no-repeat center center/cover;
-    color: #fff;
+.App {
     text-align: center;
-    padding: 2.5rem 1rem;
-}
-
-header h1 {
-    font-size: 3rem;
-    margin: 0;
-}
-
-header p {
-    font-size: 1.5rem;
-}
-
-main {
-    padding: 2rem;
-}
-
-section {
-    margin-bottom: 2rem;
-}
-
-/* Gallery */
-.gallery {
+    font-family: Arial, sans-serif;
+  }
+  
+  .board {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-}
-
-.gallery img {
-    width: 100%;
-    height: auto;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease-in-out;
-    cursor: pointer;
-}
-
-.gallery img:hover {
-    transform: scale(1.05);
-}
-
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    align-items: center;
+    grid-template-columns: repeat(8, 50px);
+    grid-template-rows: repeat(8, 50px);
+    gap: 2px;
+    margin: 20px auto;
     justify-content: center;
-    z-index: 999;
-}
-
-.modal img {
-    max-width: 90%;
-    max-height: 90%;
-    border-radius: 10px;
-}
-
-.modal-close {
-    position: absolute;
-    top: 20px;
-    right: 30px;
-    font-size: 2rem;
-    color: white;
+  }
+  
+  .cell {
+    width: 50px;
+    height: 50px;
+    background-color: green;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #000;
     cursor: pointer;
-}
-
-/* Video Gallery */
-.video-gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-}
-
-.video-gallery iframe {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* Members Section */
-.members {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-}
-
-.member-card {
-    text-align: center;
-    padding: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.member-card img {
-    width: 100%;
+  }
+  
+  .cell.black .disc {
+    background-color: black;
     border-radius: 50%;
-    margin-bottom: 0.5rem;
-}
-
-/* Footer */
-footer {
-    text-align: center;
-    padding: 1rem;
-    background: #f0f0f0;
-    color: #333;
-}
-.main-title {
-    font-size: 3rem; 
-    text-align: center; 
-    color: #2c3e50; 
-    margin-top: 20px; 
-    margin-bottom: 20px; 
-}
+    width: 40px;
+    height: 40px;
+  }
+  
+  .cell.white .disc {
+    background-color: white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+  }
+  
