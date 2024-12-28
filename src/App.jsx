@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./../styles.css"; // スタイルファイルを参照
+import "./../styles.css"; 
 
 const App = () => {
   const rows = 8;
