@@ -164,4 +164,44 @@ button:hover {
 
 .game-over button:hover {
   background-color: #0056b3;
+}.angel-devil {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  animation-duration: 2s;
+  animation-fill-mode: forwards;
+}
+
+.angel-devil img {
+  width: 200px;
+  height: auto;
+}
+
+.angel {
+  top: -300px;
+  animation-name: angel-appear;
+}
+
+@keyframes angel-appear {
+  0% {
+    top: -300px;
+  }
+  100% {
+    top: 50px;
+  }
+}
+
+.devil {
+  bottom: -300px;
+  animation-name: devil-appear;
+}
+
+@keyframes devil-appear {
+  0% {
+    bottom: -300px;
+  }
+  100% {
+    bottom: 50px;
+  }
 }

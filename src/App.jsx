@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import kadoSound from "./assetu/audio/kado.mp3";
 import kotuSound from "./assetu/audio/kotu.mp3"; 
+import angelImage from "./assetu/images/angel.png";
+import devilImage from "./assetu/images/devil.png";
 import "./../styles.css";
 
 const App = () => {
@@ -206,6 +208,16 @@ const App = () => {
               <p>勝者: {winner === "black" ? "黒" : winner === "white" ? "白" : "引き分け"}</p>
               <p>黒: {lastGame.black} 駒</p>
               <p>白: {lastGame.white} 駒</p>
+              {winner === "black" && (
+                <div className="angel-devil angel">
+                  <img src={angelImage} alt="天使" />
+                </div>
+              )}
+              {winner === "white" && (
+                <div className="angel-devil devil">
+                  <img src={devilImage} alt="悪魔" />
+                </div>
+              )}
               <button onClick={initializeBoard}>もう一度プレイ</button>
             </div>
           ) : (
