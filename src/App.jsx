@@ -14,7 +14,7 @@ const App = () => {
   const [gameOver, setGameOver] = useState(false);
   const [winner, setWinner] = useState(null);
   const [message, setMessage] = useState("");
-  const [lastGame, setLastGame] = useState(null);
+  const [lastGame, setLastGame] = useState({ black: 0, white: 0, winner: null });
   const [gameStarted, setGameStarted] = useState(false);
 
   const directions = [
@@ -90,14 +90,12 @@ const App = () => {
   };
 
   const countDiscs = (board) => {
-    return board.flat().reduce(
-      (counts, cell) => {
-        if (cell === "black") counts.black++;
-        if (cell === "white") counts.white++;
-        return counts;
-      },
-      { black: 0, white: 0 }
-    );
+    const counts = { black: 0, white: 0 };
+    board.flat().forEach(cell => {
+      if (cell === "black") counts.black++;
+      if (cell === "white") counts.white++;
+    });
+    return counts;
   };
 
   const handleTurnChange = (currentBoard, currentTurn) => {
@@ -126,8 +124,15 @@ const App = () => {
 
   const handleGameOver = (board) => {
     const { black, white } = countDiscs(board);
-    setWinner(black > white ? "black" : "white");
-    setLastGame({ black, white, winner: black > white ? "black" : "white" });
+    const winner = black > white ? "black" : (white > black ? "white" : "draw");
+    setWinner(winner);
+    setLastGame({ black, white, winner });
+
+    // 戦績をローカルストレージに保存
+    const savedScores = JSON.parse(localStorage.getItem('scores')) || { black: 0, white: 0 };
+    if (winner === "black") savedScores.black++;
+    if (winner === "white") savedScores.white++;
+    localStorage.setItem('scores', JSON.stringify(savedScores));
   };
 
   const handleCellClick = (row, col) => {
@@ -164,6 +169,11 @@ const App = () => {
     }
   }, [turn]);
 
+  useEffect(() => {
+    const savedScores = JSON.parse(localStorage.getItem('scores')) || { black: 0, white: 0 };
+    setLastGame(savedScores);
+  }, []);
+
   return (
     <div className="App">
       {!gameStarted ? (
@@ -172,9 +182,8 @@ const App = () => {
           {lastGame && (
             <div className="last-game">
               <h2>前回の記録</h2>
-              <p>黒: {lastGame.black} 駒</p>
-              <p>白: {lastGame.white} 駒</p>
-              <p>勝者: {lastGame.winner === "black" ? "黒" : "白"}</p>
+              <p>黒: {lastGame.black} 勝</p>
+              <p>白: {lastGame.white} 勝</p>
             </div>
           )}
           <button onClick={initializeBoard}>ゲームを開始</button>
@@ -185,7 +194,9 @@ const App = () => {
           {gameOver ? (
             <div>
               <h2>ゲーム終了</h2>
-              <p>勝者: {winner === "black" ? "黒" : "白"}</p>
+              <p>勝者: {winner === "black" ? "黒" : winner === "white" ? "白" : "引き分け"}</p>
+              <p>黒: {lastGame.black} 駒</p>
+              <p>白: {lastGame.white} 駒</p>
               <button onClick={initializeBoard}>もう一度プレイ</button>
             </div>
           ) : (

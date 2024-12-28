@@ -13,12 +13,12 @@
 .cell {
   width: 50px;
   height: 50px;
-  background-color: #228b22; /* 濃い緑色 */
+  background-color: #228b22; 
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  border: 1px solid #006400; /* 枠線をダークグリーンに */
+  border: 1px solid #006400; 
   position: relative;
   overflow: hidden;
   border-radius: 4px;
@@ -26,19 +26,19 @@
 }
 
 .cell:hover {
-  background-color: #32cd32; /* 明るい緑色 */
+  background-color: #32cd32; 
 }
 
 .cell.black,
 .cell.white {
-  cursor: default; /* すでに駒があるセルはクリック不可に */
+  cursor: default; 
 }
 
 .disc {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* 影を追加して立体感を演出 */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); 
   transition: transform 0.3s ease;
 }
 
@@ -66,20 +66,18 @@
   }
 }
 
-/* スタート画面 */
 .start-screen {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* 全画面の高さを確保 */
+  height: 100vh; 
   text-align: center;
-  background-color: #3e8e41; /* 緑色の背景 */
+  background-color: #3e8e41; 
   position: relative;
-  z-index: 1; /* ボタンや文字が背景より前に表示されるように */
+  z-index: 1; 
 }
 
-/* オセロ盤の背景 */
 .start-screen::before {
   content: '';
   position: absolute;
@@ -92,10 +90,9 @@
   transform: translate(-50%, -50%);
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  z-index: 0; /* 背景が前面の要素より後ろに表示される */
+  z-index: 0; 
 }
 
-/* 格子線 */
 .start-screen::after {
   content: '';
   position: absolute;
@@ -104,21 +101,20 @@
   width: 480px;
   height: 480px;
   background: transparent;
-  border: 1px solid #2c6b2f; /* 格子線の色 */
+  border: 1px solid #2c6b2f; 
   transform: translate(-50%, -50%);
-  z-index: 0; /* 格子線が背景の一部として後ろに表示される */
+  z-index: 0; 
 }
 
-/* スタート画面のタイトル */
 .start-screen h1 {
   font-size: 5rem;
   margin-bottom: 20px;
-  z-index: 1; /* 文字が背景より前に表示される */
+  z-index: 1; 
 }
 
 .last-game {
   margin-bottom: 20px;
-  z-index: 1; /* 文字が背景より前に表示される */
+  z-index: 1; 
 }
 
 button {
@@ -129,7 +125,7 @@ button {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  z-index: 1; /* ボタンが背景より前に表示される */
+  z-index: 1; 
 }
 
 button:hover {
