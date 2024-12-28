@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./../styles.css"; 
+import "./../styles.css";
 
 const App = () => {
   const rows = 8;
@@ -13,6 +13,7 @@ const App = () => {
   const [turn, setTurn] = useState("black");
   const [gameOver, setGameOver] = useState(false);
   const [winner, setWinner] = useState(null);
+  const [message, setMessage] = useState("");
 
   const directions = [
     [-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [-1, 1], [1, -1], [1, 1]
@@ -30,11 +31,14 @@ const App = () => {
     setTurn("black");
     setGameOver(false);
     setWinner(null);
+    setMessage("");
   };
 
   useEffect(() => {
     initializeBoard();
   }, []);
+
+  const isInBounds = (x, y) => x >= 0 && x < rows && y >= 0 && y < cols;
 
   const isValidMove = (row, col, board, player) => {
     if (board[row][col]) return false;
@@ -46,13 +50,13 @@ const App = () => {
       let y = col + dy;
       let foundOpponent = false;
 
-      while (x >= 0 && x < rows && y >= 0 && y < cols && board[x][y] === opponent) {
+      while (isInBounds(x, y) && board[x][y] === opponent) {
         foundOpponent = true;
         x += dx;
         y += dy;
       }
 
-      if (foundOpponent && x >= 0 && x < rows && y >= 0 && y < cols && board[x][y] === player) {
+      if (foundOpponent && isInBounds(x, y) && board[x][y] === player) {
         return true;
       }
     }
@@ -71,13 +75,13 @@ const App = () => {
       let y = col + dy;
       const discsToFlip = [];
 
-      while (x >= 0 && x < rows && y >= 0 && y < cols && newBoard[x][y] === opponent) {
+      while (isInBounds(x, y) && newBoard[x][y] === opponent) {
         discsToFlip.push([x, y]);
         x += dx;
         y += dy;
       }
 
-      if (x >= 0 && x < rows && y >= 0 && y < cols && newBoard[x][y] === player) {
+      if (isInBounds(x, y) && newBoard[x][y] === player) {
         discsToFlip.forEach(([flipX, flipY]) => {
           newBoard[flipX][flipY] = player;
         });
@@ -88,40 +92,56 @@ const App = () => {
   };
 
   const countDiscs = board => {
-    let blackCount = 0;
-    let whiteCount = 0;
-    board.forEach(row => {
-      row.forEach(cell => {
-        if (cell === "black") blackCount++;
-        if (cell === "white") whiteCount++;
-      });
-    });
-    return { blackCount, whiteCount };
+    return board.flat().reduce(
+      (counts, cell) => {
+        if (cell === "black") counts.black++;
+        if (cell === "white") counts.white++;
+        return counts;
+      },
+      { black: 0, white: 0 }
+    );
   };
 
-  const checkGameOver = board => {
-    for (let row = 0; row < rows; row++) {
-      for (let col = 0; col < cols; col++) {
-        if (isValidMove(row, col, board, "black") || isValidMove(row, col, board, "white")) {
-          return false;
-        }
-      }
+  const handleTurnChange = (currentBoard, currentTurn) => {
+    const nextTurn = currentTurn === "black" ? "white" : "black";
+
+    const hasValidMove = currentBoard.some((row, rowIndex) =>
+      row.some((cell, colIndex) => isValidMove(rowIndex, colIndex, currentBoard, nextTurn))
+    );
+
+    if (hasValidMove) {
+      setTurn(nextTurn);
+      setMessage("");
+    } else {
+      setMessage(`${nextTurn === "black" ? "黒" : "白"}は動ける手がありません。`);
     }
-    return true;
+
+    if (
+      !hasValidMove &&
+      !currentBoard.some((row, rowIndex) =>
+        row.some((cell, colIndex) => isValidMove(rowIndex, colIndex, currentBoard, currentTurn))
+      )
+    ) {
+      setGameOver(true);
+      const { black, white } = countDiscs(currentBoard);
+      setWinner(black > white ? "black" : "white");
+    }
   };
 
   const handleCellClick = (row, col) => {
-    if (gameOver || !isValidMove(row, col, board, turn)) return;
+    if (gameOver || !isValidMove(row, col, board, turn)) {
+      setMessage("無効な手です。");
+      return;
+    }
 
     const newBoard = flipDiscs(row, col, board, turn);
     setBoard(newBoard);
 
-    if (checkGameOver(newBoard)) {
-      setGameOver(true);
-      const { blackCount, whiteCount } = countDiscs(newBoard);
-      setWinner(blackCount > whiteCount ? "black" : "white");
+    if (gameOver) {
+      const { black, white } = countDiscs(newBoard);
+      setWinner(black > white ? "black" : "white");
     } else {
-      setTurn(turn === "black" ? "white" : "black");
+      handleTurnChange(newBoard, turn);
     }
   };
 
@@ -134,6 +154,7 @@ const App = () => {
         }
       }
     }
+
     if (validMoves.length > 0) {
       const [row, col] = validMoves[Math.floor(Math.random() * validMoves.length)];
       handleCellClick(row, col);
@@ -142,9 +163,10 @@ const App = () => {
 
   useEffect(() => {
     if (!gameOver && turn === "white") {
-      setTimeout(handleAIMove, 500);
+      const timer = setTimeout(handleAIMove, 500);
+      return () => clearTimeout(timer);
     }
-  }, [turn, board]);
+  }, [turn]);
 
   return (
     <div className="App">
@@ -158,6 +180,7 @@ const App = () => {
       ) : (
         <>
           <p>現在のターン: {turn === "black" ? "黒" : "白"}</p>
+          <p>{message}</p>
           <div className="board">
             {board.map((row, rowIndex) =>
               row.map((cell, colIndex) => (
